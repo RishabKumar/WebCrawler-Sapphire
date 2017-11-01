@@ -1,15 +1,30 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * MIT License
+ *
+ * Copyright (c) 2017 Rishabh Kumar
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
-
 package crawler;
 
 import link.ErrorLink;
 import java.io.BufferedInputStream;
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -20,7 +35,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.zip.GZIPInputStream;
 import javax.net.ssl.HttpsURLConnection;
 import link.Link;
 import ui.ControlDesk;
@@ -37,37 +51,34 @@ public class Crawler extends Thread{
     String status_code_data = "";
     TreeSet<String> linkTree = new TreeSet<>();
     HashSet<String> parsedList = new HashSet<>();
-    String domain = "http://www.lego.com/en-us/speedchampions/";
-    String filter = "en-us/speedchampions/";
-    String ignore = "http://cache.lego.com";
+    String sitelink;
+    String host;
+    String filter;
+    String ignore;
     ArrayList<ErrorLink> errorUrlList = new ArrayList<>();
     ArrayList<Link> urlList = new ArrayList<>();
     ConcurrentHashMap<String, String> childToParentMap = new ConcurrentHashMap<>();
     public boolean isCancelled = false;
     
-    public Crawler(String domain, String filter, String ignore) 
+    public Crawler(String sitelink, String filter, String ignore) 
     {
-        this.domain = domain;
+        this.sitelink = sitelink;
         this.filter = filter;
         this.ignore = ignore;
+        try
+        {
+            URL url = new URL(sitelink);
+            this.host = url.getProtocol()+"://"+url.getHost();
+        }
+        catch(Exception e)
+        {
+            System.exit(1);
+        }
     }
     
-    public static void main(String[] args) {
-        // TODO code application logic here
-  //      new Crawler("", "", "").connectAndGetHtml("https://wwwsecure.webqa.lego.com/services/comments/api/v1/comments?csrfToken=4ead6cf2-1107-4e6b-8301-d1edf4139565&cl=en-US&sl=en-US", 0);
-        
-  
-        new ControlDesk(new Crawler("", "", ""));
-        /*/
-        obj.parse(obj.domain);
-
-        for(ErrorLink err:obj.errorUrlList)
-        {
-        	System.out.println("====> "+err.getErrorLink()+" found on "+err.getParentLink()+"\n");
-        }
-        System.out.println("Total links parsed:"+obj.parsedList.size());
-        obj.writeToCSV();
-/*/
+    public static void main(String[] args) 
+    {
+        new ControlDesk(new Crawler("https://github.com/RishabKumar/WebCrawler-Sapphire", "", ""));
     }
     
     public ArrayList<ErrorLink> getErrorUrlList()
@@ -91,7 +102,7 @@ public class Crawler extends Thread{
     
     public void parse()
     {
-        parse(domain);
+        parse(sitelink);
     }
     
     public void parse(String link)
@@ -118,21 +129,18 @@ public class Crawler extends Thread{
         HttpURLConnection conn = null;
         HttpsURLConnection conns = null;
         BufferedInputStream bis = null;
-        GZIPInputStream zip = null;
         try
         {
             URL url = new URL(link);
-            if(link.toLowerCase().startsWith("https"))
+            if(url.getProtocol().equals("https"))
             {
                 conns = (HttpsURLConnection) url.openConnection();
                 conns.setDoInput(true);
                 conns.setDoOutput(true);
-                    conns.setRequestMethod("POST");
+                conns.setRequestMethod("GET");
                 status_code = conns.getResponseCode();
-                status_code_data += status_code+","+link+"\n";
-              
+            //    status_code_data += status_code+","+link+"\n";
                 byte[] bytes = new byte[1];
-                
                 bis = new BufferedInputStream(conns.getInputStream());
                 while(bis.read(bytes) > -1)
                 {
@@ -149,7 +157,7 @@ public class Crawler extends Thread{
                 conn.setDoOutput(true);
                 conn.setRequestMethod("GET");
                 status_code = conn.getResponseCode();
-                status_code_data += status_code+","+link+"\n";
+            //    status_code_data += status_code+","+link+"\n";
                 byte[] bytes = new byte[1];
                 bis = new BufferedInputStream(conn.getInputStream());
                 while(bis.read(bytes) > -1)
@@ -207,7 +215,7 @@ public class Crawler extends Thread{
                 }
                 if(href.charAt(0) == '/')
                 {
-                    href = domain+href;
+                    href = host+href;
                 }
                 if(!parsedList.contains(href) && href.contains(filter) && !href.contains(ignore))
                 {
@@ -224,19 +232,47 @@ public class Crawler extends Thread{
         return arr;
     }
     
-    public void writeToCSV()
+    @Deprecated
+    public boolean writeToCSV()
     {
-    	try 
-    	{
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("D:\\statusCode"));
-			oos.writeObject(status_code_data);
-			oos.close();
-    	} catch ( IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	
+        if(status_code_data != null && status_code_data.length() > 0)
+        {
+            try 
+            {
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("webcrawler-report.csv"));
+                oos.writeObject(status_code_data);
+                oos.close();
+                return true;
+            } catch ( IOException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
     
+    public boolean writeToCSV(String data)
+    {
+        if(data != null && data.length() > 0)
+        {
+            try 
+            {
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("webcrawler-report.csv"));
+                oos.writeObject(data);
+                oos.close();
+                return true;
+            } catch ( IOException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+    
+    public void clearReportData()
+    {
+        status_code_data = "";
+    }
 }

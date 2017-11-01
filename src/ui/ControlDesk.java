@@ -1,7 +1,25 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * MIT License
+ *
+ * Copyright (c) 2017 Rishabh Kumar
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package ui;
 
@@ -18,13 +36,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 import link.Link;
 
 /**
@@ -62,6 +77,7 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
         ignoreTextField = new javax.swing.JTextField();
         crawlerButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable()
         {
@@ -112,21 +128,21 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
 
         jLabel3.setText("ignore");
 
-        urlTextField.setText("http://www.lego.com/en-us/");
+        urlTextField.setText("https://github.com/");
         urlTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 urlTextFieldActionPerformed(evt);
             }
         });
 
-        filterTextField.setText("http://www.lego.com/en-us/");
+        filterTextField.setText("http");
         filterTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 filterTextFieldActionPerformed(evt);
             }
         });
 
-        ignoreTextField.setText("http://cache.lego.com/");
+        ignoreTextField.setText("https://github.com/about");
         ignoreTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ignoreTextFieldActionPerformed(evt);
@@ -134,11 +150,23 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
         });
 
         crawlerButton.setText("Crawl");
+        crawlerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crawlerButtonActionPerformed(evt);
+            }
+        });
 
         clearButton.setText("Clear");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearButtonActionPerformed(evt);
+            }
+        });
+
+        saveButton.setText("Save");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
             }
         });
 
@@ -154,14 +182,15 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ignoreTextField)
+                    .addComponent(ignoreTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE)
                     .addComponent(urlTextField)
                     .addComponent(filterTextField))
-                .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(clearButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(saveButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clearButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(crawlerButton, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                .addGap(80, 80, 80))
+                .addGap(83, 83, 83))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,7 +207,8 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -187,7 +217,7 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(ignoreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -213,7 +243,7 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE))
         );
 
         pack();
@@ -235,7 +265,42 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
         jTable1.setModel(new javax.swing.table.DefaultTableModel (
         new Object [][] {{}},new String [] { "Serial", "Status Code", "Link", "Parent Link"}));
         jTable1.updateUI();
+        obj.clearReportData();
     }//GEN-LAST:event_clearButtonActionPerformed
+
+    private void crawlerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crawlerButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_crawlerButtonActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        // TODO add your handling code here:       
+        StringBuilder data = new StringBuilder();
+        TableModel tm = jTable1.getModel();
+        int rowcount = tm.getRowCount();
+        int colcount = tm.getColumnCount();
+        for(int j = 0; j < colcount; j++)
+        {
+            data.append(tm.getColumnName(j)).append(',');
+        }
+        data.append("\r\n");
+        for(int i = 0; i < rowcount; i++)
+        {
+            for(int j = 0; j < colcount; j++)
+            {
+               data.append(tm.getValueAt(i, j)).append(',');
+            }
+            data.append("\r\n");
+        }
+        boolean flag = obj.writeToCSV(data.toString());
+        if(flag)
+        {
+            JOptionPane.showMessageDialog(ControlDesk.this, "Report Saved!");
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(ControlDesk.this, "Error Saving!");
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -271,11 +336,7 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                initComponents(); 
-    //            DefaultTableModel dtm = ((DefaultTableModel )ControlDesk.this.jTable1.getModel());
-                
-//                        jTable1.setDefaultRenderer(Object.class,new CustomTableCellRender());
-                   
+                initComponents();    
                 ControlDesk.this.setVisible(true);
                 ControlDesk.this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 crawlerButton.addActionListener(ControlDesk.this);
@@ -306,6 +367,7 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JButton saveButton;
     private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables
 
@@ -318,6 +380,7 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
             crawlerButton.setText("Stop");
             obj.isCancelled = false;
             clearButton.setEnabled(false);
+            saveButton.setEnabled(false);
             doParsing();
         }
         else
@@ -326,12 +389,12 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
             obj.isCancelled = true;
             crawlerButton.setText("Crawl");
             clearButton.setEnabled(true);
+            saveButton.setEnabled(true);
         }
     }
     
     public void doParsing()
     {
-        
         Callable updateUI = new Callable<Boolean>()
         {
             @Override
@@ -339,6 +402,7 @@ public class ControlDesk extends javax.swing.JFrame implements ActionListener{
             {
                 obj.parse();
                 JOptionPane.showMessageDialog(ControlDesk.this, "Crawling completed");
+                crawlerButton.setText("Crawl");
                 return true;
             }
         };
